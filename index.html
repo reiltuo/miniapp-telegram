@@ -6,6 +6,7 @@
   <meta name="theme-color" content="#ffffff">
   <title>Assinar conteúdo</title>
   <link rel="stylesheet" href="styles.css">
+  <link rel="stylesheet" href="animations.css">
   <script src="https://telegram.org/js/telegram-web-app.js" async></script>
 </head>
 <body>
@@ -22,7 +23,7 @@
 
     <section class="profile-info section-pad">
       <h1>Vitória Lima <span class="verified-dot" aria-label="Perfil verificado">✓</span></h1>
-      <span class="verified-label">◉ Verificada pelo Telegram</span>
+      <span class="verified-label attention-glow">◉ Verificada pelo Telegram</span>
       <p class="handle">@vitorialima</p>
       <p class="stats"><span>▣ 145 Fotos</span><span>▮ 63 Vídeos</span></p>
       <p class="description">Desbloqueie agora para ter acesso instantâneo ao meu acervo privado. Sem assinaturas, pague uma vez e tenha acesso direto ao conteúdo.</p>
@@ -40,7 +41,7 @@
         <button class="video-card" type="button" aria-label="Reproduzir prévia 3"><video src="assets/preview.mp4" muted playsinline preload="metadata"></video><span class="play">▶</span></button>
         <button class="video-card" type="button" aria-label="Reproduzir prévia 4"><video src="assets/preview.mp4" muted playsinline preload="metadata"></video><span class="play">▶</span></button>
       </div>
-      <div class="locked-content"><b>+ 200 Mídias</b><small>Disponíveis após confirmação</small></div>
+      <div class="locked-content attention-card"><b>+ 200 Mídias</b><small>Disponíveis após confirmação</small></div>
     </section>
 
     <section class="trust-section section-pad">
@@ -56,7 +57,7 @@
       </label>
       <label class="plan">
         <input type="radio" name="plan" value="3000" data-label="VIP + Chamada de vídeo via WhatsApp">
-        <span class="plan-tag hot">MAIS VENDIDO</span>
+        <span class="plan-tag hot attention-swing">MAIS VENDIDO</span>
         <span><b>VIP + Chamada de vídeo via WhatsApp</b></span>
         <strong>R$ 30,00</strong><i></i>
       </label>
@@ -65,7 +66,7 @@
     </section>
 
     <footer class="payment-footer">
-      <button class="pay-button" id="pay-button" type="button">Pagar R$ 16,99 no PIX</button>
+      <button class="pay-button attention-pay" id="pay-button" type="button">Pagar R$ 16,99 no PIX</button>
     </footer>
   </main>
 
