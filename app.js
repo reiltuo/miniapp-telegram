@@ -2,6 +2,7 @@ const telegram = window.Telegram?.WebApp;
 const state = { amount: 1699, label: "PACK VIP", chargeId: null, pollTimer: null, creatingCharge: false, paid: false };
 const money = amount => (amount / 100).toLocaleString("pt-BR", { style: "currency", currency: "BRL" });
 const byId = id => document.getElementById(id);
+const CATALOG_PREVIEW_SECONDS = 3;
 
 telegram?.ready();
 telegram?.expand();
@@ -12,6 +13,7 @@ document.querySelectorAll(".video-card[data-video]").forEach(card => {
     document.querySelectorAll(".video-card[data-video] video").forEach(other => {
       if (other !== video) {
         other.pause();
+        other.currentTime = 0;
         other.closest(".video-card").classList.remove("playing");
         other.closest(".video-card").setAttribute("aria-pressed", "false");
       }
@@ -31,6 +33,14 @@ document.querySelectorAll(".video-card[data-video]").forEach(card => {
     }
   });
   video.addEventListener("ended", () => {
+    video.currentTime = 0;
+    card.classList.remove("playing");
+    card.setAttribute("aria-pressed", "false");
+  });
+  video.addEventListener("timeupdate", () => {
+    if (video.currentTime < CATALOG_PREVIEW_SECONDS) return;
+    video.pause();
+    video.currentTime = 0;
     card.classList.remove("playing");
     card.setAttribute("aria-pressed", "false");
   });
