@@ -1,0 +1,73 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#075e54">
+  <title>Conversa privada</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <main class="chat-app">
+    <header class="chat-header">
+      <button class="back-button" type="button" aria-label="Voltar">‹</button>
+      <img src="../assets/profile.jpeg" alt="Foto de perfil de Vitória">
+      <div class="contact">
+        <strong>Vitória</strong>
+        <small id="contact-status">atendimento automatizado</small>
+      </div>
+      <span class="video-symbol" aria-hidden="true"></span>
+    </header>
+
+    <section class="automation-notice">
+      Conversa automática para contratação de chamada de vídeo. Nenhum encontro físico é oferecido.
+    </section>
+
+    <section class="messages" id="messages" aria-live="polite">
+      <div class="day-label">HOJE</div>
+    </section>
+
+    <form class="composer" id="composer">
+      <input id="lead-input" type="text" autocomplete="off" placeholder="Digite uma mensagem" maxlength="300" disabled>
+      <button id="send-button" type="submit" aria-label="Enviar mensagem" disabled>Enviar</button>
+    </form>
+  </main>
+
+  <div class="age-backdrop" id="age-gate">
+    <section class="age-modal" role="dialog" aria-modal="true" aria-labelledby="age-title">
+      <span class="age-mark">18+</span>
+      <h1 id="age-title">Conteúdo para adultos</h1>
+      <p>Esta experiência oferece uma chamada de vídeo privada entre adultos. Confirme que você tem 18 anos ou mais.</p>
+      <button id="confirm-age" type="button">Tenho 18 anos ou mais</button>
+      <button id="leave-page" class="secondary" type="button">Sair</button>
+    </section>
+  </div>
+
+  <div class="pix-backdrop" id="pix-modal" hidden>
+    <section class="pix-sheet" role="dialog" aria-modal="true" aria-labelledby="pix-title">
+      <button class="close-pix" id="close-pix" type="button" aria-label="Fechar">×</button>
+      <span class="pix-label">PIX</span>
+      <h2 id="pix-title">Pagamento da chamada</h2>
+      <p id="pix-description">Chamada de vídeo privada</p>
+      <img id="qr-image" alt="QR Code PIX">
+      <label for="pix-code">PIX COPIA E COLA</label>
+      <div class="copy-row">
+        <input id="pix-code" readonly value="Gerando cobrança...">
+        <button id="copy-pix" type="button">Copiar</button>
+      </div>
+      <strong class="pix-total" id="pix-total">R$ 39,90</strong>
+      <button class="paid-button" id="check-payment" type="button">Já realizei o pagamento</button>
+      <p class="payment-status" id="payment-status"></p>
+    </section>
+  </div>
+
+  <template id="incoming-template">
+    <article class="message incoming"><p></p><time></time></article>
+  </template>
+  <template id="outgoing-template">
+    <article class="message outgoing"><p></p><time></time><span class="read-mark">✓✓</span></article>
+  </template>
+
+  <script src="app.js"></script>
+</body>
+</html>

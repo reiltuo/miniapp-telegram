@@ -5,6 +5,9 @@ const PRODUCTS = new Map([
   [3000, "VIP + Chamada de vídeo via WhatsApp"],
   [999, "Acesso VIP promocional"],
   [499, "Acesso VIP extremo"],
+  [3990, "Chamada de vídeo privada"],
+  [1995, "Chamada de vídeo privada promocional"],
+  [998, "Chamada de vídeo privada com desconto final"],
 ]);
 
 function json(data, status = 200) {
