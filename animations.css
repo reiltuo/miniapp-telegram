@@ -36,6 +36,12 @@
   object-fit: cover;
 }
 
+.cover-video,
+.video-card[data-video] video {
+  filter: blur(0.45px);
+  transform: scale(1.004);
+}
+
 .attention-pay {
   box-shadow: 0 8px 22px rgba(20, 175, 232, 0.3);
   animation: pay-pulse 2.4s ease-in-out infinite;

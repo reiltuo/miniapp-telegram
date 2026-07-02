@@ -2,8 +2,6 @@
 
 Frontend mobile-first para Telegram com prévias em vídeo, prova social, ofertas, checkout PIX e dois downsells.
 
-Também existe uma experiência de conversa automatizada em `/chat/`, inspirada em aplicativos de mensagens e identificada como atendimento automático. Ela oferece somente chamada de vídeo para maiores de 18 anos e utiliza o mesmo checkout PIX.
-
 ## Arquivos de mídia
 
 Substitua os arquivos em `assets` mantendo os nomes ou altere os caminhos em `index.html`.
