@@ -1,5 +1,5 @@
 const telegram = window.Telegram?.WebApp;
-const state = { amount: 1699, label: "PACK VIP", chargeId: null, pollTimer: null };
+const state = { amount: 1699, label: "PACK VIP", chargeId: null, pollTimer: null, creatingCharge: false, paid: false };
 const money = amount => (amount / 100).toLocaleString("pt-BR", { style: "currency", currency: "BRL" });
 const byId = id => document.getElementById(id);
 
@@ -8,11 +8,32 @@ telegram?.expand();
 
 document.querySelectorAll(".video-card[data-video]").forEach(card => {
   const video = card.querySelector("video");
-  card.addEventListener("click", () => {
-    document.querySelectorAll(".video-card[data-video] video").forEach(other => { if (other !== video) { other.pause(); other.closest(".video-card").classList.remove("playing"); } });
-    if (video.paused) { video.play(); card.classList.add("playing"); } else { video.pause(); card.classList.remove("playing"); }
+  card.addEventListener("click", async () => {
+    document.querySelectorAll(".video-card[data-video] video").forEach(other => {
+      if (other !== video) {
+        other.pause();
+        other.closest(".video-card").classList.remove("playing");
+        other.closest(".video-card").setAttribute("aria-pressed", "false");
+      }
+    });
+    if (video.paused) {
+      try {
+        await video.play();
+        card.classList.add("playing");
+        card.setAttribute("aria-pressed", "true");
+      } catch {
+        card.classList.remove("playing");
+      }
+    } else {
+      video.pause();
+      card.classList.remove("playing");
+      card.setAttribute("aria-pressed", "false");
+    }
   });
-  video.addEventListener("ended", () => card.classList.remove("playing"));
+  video.addEventListener("ended", () => {
+    card.classList.remove("playing");
+    card.setAttribute("aria-pressed", "false");
+  });
 });
 
 function selectAmount(amount, label) {
@@ -27,52 +48,82 @@ document.querySelectorAll("input[name=plan]").forEach(input => input.addEventLis
   selectAmount(input.value, input.dataset.label);
 }));
 
-function showModal(id) { byId(id).hidden = false; document.body.style.overflow = "hidden"; }
+function showModal(id) {
+  const modal = byId(id);
+  modal.hidden = false;
+  document.body.style.overflow = "hidden";
+  modal.querySelector("button")?.focus();
+}
 function hideModal(id) { byId(id).hidden = true; document.body.style.overflow = ""; }
 
 document.querySelectorAll("[data-close]").forEach(button => button.addEventListener("click", () => {
   hideModal(button.dataset.close);
-  showModal("downsell-one");
+  if (!state.paid) showModal("downsell-one");
 }));
 
 async function createPixCharge() {
+  if (state.creatingCharge) return;
+  state.creatingCharge = true;
+  byId("pay-button").disabled = true;
+  byId("paid-button").disabled = true;
   byId("pix-code").value = "Gerando cobrança PIX...";
   byId("qr-image").removeAttribute("src");
-  byId("payment-status").textContent = "";
+  byId("payment-status").textContent = "Gerando uma cobrança segura...";
   showModal("pix-modal");
   try {
     const response = await fetch("/api/pix/create", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ amount: state.amount, description: state.label }) });
-    if (!response.ok) throw new Error("API PIX indisponível");
-    const charge = await response.json();
+    const charge = await response.json().catch(() => ({ error: "Não foi possível gerar o PIX" }));
+    if (!response.ok) throw new Error(charge.error || "API PIX indisponível");
     state.chargeId = charge.id;
     byId("pix-code").value = charge.copyPasteCode;
     byId("qr-image").src = charge.qrCodeBase64.startsWith("data:") ? charge.qrCodeBase64 : `data:image/png;base64,${charge.qrCodeBase64}`;
+    byId("payment-status").textContent = "PIX gerado. Aguardando pagamento.";
+    byId("paid-button").disabled = false;
     startPaymentPolling();
-  } catch {
-    byId("pix-code").value = "Configure o endpoint /api/pix/create no backend";
-    byId("payment-status").textContent = "Modo de demonstração. Consulte o README para integrar o gateway.";
-    byId("qr-image").src = "assets/qr-placeholder.svg";
+  } catch (error) {
+    byId("pix-code").value = "Não foi possível gerar o código PIX";
+    byId("payment-status").textContent = error.message;
+  } finally {
+    state.creatingCharge = false;
+    byId("pay-button").disabled = false;
   }
 }
 
 async function checkPayment() {
   if (!state.chargeId) return;
-  const response = await fetch(`/api/pix/status?id=${encodeURIComponent(state.chargeId)}`);
-  if (!response.ok) return;
-  const result = await response.json();
-  if (result.status === "paid") {
-    clearInterval(state.pollTimer);
-    byId("payment-status").textContent = "Pagamento confirmado. Acesso liberado.";
-    telegram?.HapticFeedback?.notificationOccurred("success");
-    telegram?.sendData(JSON.stringify({ action: "pix_paid", chargeId: state.chargeId }));
+  try {
+    const response = await fetch(`/api/pix/status?id=${encodeURIComponent(state.chargeId)}`);
+    if (!response.ok) return;
+    const result = await response.json().catch(() => ({}));
+    if (result.status === "paid") {
+      state.paid = true;
+      clearInterval(state.pollTimer);
+      byId("payment-status").textContent = "Pagamento confirmado. Acesso liberado.";
+      telegram?.HapticFeedback?.notificationOccurred("success");
+      telegram?.sendData(JSON.stringify({ action: "pix_paid", chargeId: state.chargeId }));
+    } else {
+      byId("payment-status").textContent = "Pagamento ainda não identificado. Tente novamente em alguns segundos.";
+    }
+  } catch {
+    byId("payment-status").textContent = "Não foi possível consultar o pagamento agora.";
   }
 }
 function startPaymentPolling() { clearInterval(state.pollTimer); state.pollTimer = setInterval(checkPayment, 5000); }
 
 byId("pay-button").addEventListener("click", createPixCharge);
 byId("paid-button").addEventListener("click", checkPayment);
-byId("copy-button").addEventListener("click", async () => { await navigator.clipboard.writeText(byId("pix-code").value); byId("copy-button").textContent = "Copiado"; setTimeout(() => byId("copy-button").textContent = "Copiar", 1600); });
-byId("back-button").addEventListener("click", () => { if (telegram) telegram.BackButton.isVisible ? telegram.BackButton.hide() : telegram.close(); else showModal("downsell-one"); });
+byId("copy-button").addEventListener("click", async () => {
+  const pixInput = byId("pix-code");
+  try {
+    await navigator.clipboard.writeText(pixInput.value);
+  } catch {
+    pixInput.select();
+    document.execCommand("copy");
+  }
+  byId("copy-button").textContent = "Copiado";
+  setTimeout(() => byId("copy-button").textContent = "Copiar", 1600);
+});
+byId("back-button").addEventListener("click", () => { if (telegram) telegram.close(); else showModal("downsell-one"); });
 document.querySelector("[data-next-downsell]").addEventListener("click", () => { hideModal("downsell-one"); showModal("downsell-two"); });
 document.querySelectorAll("[data-offer]").forEach(button => button.addEventListener("click", () => { hideModal("downsell-one"); hideModal("downsell-two"); selectAmount(button.dataset.offer, "Acesso VIP promocional"); createPixCharge(); }));
 byId("final-exit").addEventListener("click", () => { hideModal("downsell-two"); telegram?.close(); });

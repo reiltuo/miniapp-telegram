@@ -6,28 +6,43 @@
   <meta name="theme-color" content="#ffffff">
   <title>Assinar conteúdo</title>
   <link rel="stylesheet" href="styles.css">
-  <link rel="stylesheet" href="animations.css">
   <script src="https://telegram.org/js/telegram-web-app.js" async></script>
 </head>
 <body>
+  <svg class="svg-sprite" aria-hidden="true">
+    <symbol id="i-back" viewBox="0 0 24 24"><path d="M15 18l-6-6 6-6"/></symbol>
+    <symbol id="i-check" viewBox="0 0 24 24"><path d="M5 12.5l4.5 4.5L19 7.5"/></symbol>
+    <symbol id="i-image" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="16" rx="2"/><circle cx="8.5" cy="9" r="1.5"/><path d="M4 17l5-5 4 4 2-2 5 5"/></symbol>
+    <symbol id="i-video" viewBox="0 0 24 24"><rect x="3" y="5" width="14" height="14" rx="2"/><path d="M17 10l4-3v10l-4-3z"/></symbol>
+    <symbol id="i-play" viewBox="0 0 24 24"><path class="fill" d="M9 7l8 5-8 5z"/></symbol>
+    <symbol id="i-lock" viewBox="0 0 24 24"><rect x="5" y="10" width="14" height="11" rx="2"/><path d="M8 10V7a4 4 0 018 0v3"/></symbol>
+    <symbol id="i-shield" viewBox="0 0 24 24"><path d="M12 3l8 3v5c0 5.3-3.4 8.4-8 10-4.6-1.6-8-4.7-8-10V6z"/><path d="M8.5 12l2.3 2.3 4.7-5"/></symbol>
+    <symbol id="i-refund" viewBox="0 0 24 24"><path d="M4 9V4l3 3a8 8 0 11-1.2 9"/><path d="M15 9.5c-.7-.7-1.7-1-2.7-.8-1 .2-1.7.8-1.7 1.6 0 2.2 4.8 1.1 4.8 3.5 0 .9-.8 1.6-1.9 1.8-1.2.2-2.4-.2-3.1-1M13 7.5v1M13 15.6v1"/></symbol>
+    <symbol id="i-user" viewBox="0 0 24 24"><circle cx="12" cy="8" r="3"/><path d="M5 20c.7-4.2 3-6.3 7-6.3s6.3 2.1 7 6.3"/><path d="M17 5l2 2 3-3"/></symbol>
+  </svg>
+
   <main class="app-shell">
     <header class="topbar">
-      <button class="icon-button" type="button" aria-label="Voltar" id="back-button">‹</button>
+      <button class="icon-button" type="button" aria-label="Voltar" id="back-button"><svg><use href="#i-back"/></svg></button>
       <strong>ASSINAR</strong>
     </header>
 
     <section class="profile-hero">
-      <video class="cover-video" src="assets/banner.mp4" autoplay muted loop playsinline></video>
+      <video class="cover-video" src="assets/banner.mp4" autoplay muted loop playsinline preload="metadata"></video>
+      <span class="cover-overlay"></span>
       <img class="avatar" src="assets/profile.jpeg" alt="Foto de perfil de Vitória Lima">
     </section>
 
     <section class="profile-info section-pad">
-      <h1>Vitória Lima <span class="verified-dot" aria-label="Perfil verificado">✓</span></h1>
-      <span class="verified-label attention-glow">◉ Verificada pelo Telegram</span>
+      <h1>Vitória Lima <span class="verified-dot" aria-label="Perfil verificado"><svg><use href="#i-check"/></svg></span></h1>
+      <span class="verified-label"><span class="telegram-mark">T</span> Verificada pelo Telegram</span>
       <p class="handle">@vitorialima</p>
-      <p class="stats"><span>▣ 145 Fotos</span><span>▮ 63 Vídeos</span></p>
+      <div class="stats">
+        <span><svg><use href="#i-image"/></svg><b>145</b> Fotos</span>
+        <span><svg><use href="#i-video"/></svg><b>63</b> Vídeos</span>
+      </div>
       <p class="description">Desbloqueie agora para ter acesso instantâneo ao meu acervo privado. Sem assinaturas, pague uma vez e tenha acesso direto ao conteúdo.</p>
-      <div class="badges"><span>100% Entregue</span><span>Zero Reclamações</span></div>
+      <div class="badges"><span><svg><use href="#i-check"/></svg>100% Entregue</span><span><svg><use href="#i-shield"/></svg>Zero Reclamações</span></div>
     </section>
 
     <section class="content-preview section-pad">
@@ -36,41 +51,40 @@
         <span>AMOSTRA GRÁTIS</span>
       </div>
       <div class="video-grid">
-        <button class="video-card" data-video type="button" aria-label="Reproduzir prévia 1"><video src="assets/catalogo-1.mp4" muted playsinline preload="metadata"></video><span class="play">▶</span></button>
-        <button class="video-card" data-video type="button" aria-label="Reproduzir prévia 2"><video src="assets/catalogo-2.mp4" muted playsinline preload="metadata"></video><span class="play">▶</span></button>
-        <button class="video-card" data-video type="button" aria-label="Reproduzir prévia 3"><video src="assets/catalogo-3.mp4" muted playsinline preload="metadata"></video><span class="play">▶</span></button>
+        <button class="video-card" data-video type="button" aria-label="Reproduzir prévia 1" aria-pressed="false"><video src="assets/catalogo-1.mp4" muted playsinline preload="metadata"></video><span class="play"><svg><use href="#i-play"/></svg></span></button>
+        <button class="video-card" data-video type="button" aria-label="Reproduzir prévia 2" aria-pressed="false"><video src="assets/catalogo-2.mp4" muted playsinline preload="metadata"></video><span class="play"><svg><use href="#i-play"/></svg></span></button>
+        <button class="video-card" data-video type="button" aria-label="Reproduzir prévia 3" aria-pressed="false"><video src="assets/catalogo-3.mp4" muted playsinline preload="metadata"></video><span class="play"><svg><use href="#i-play"/></svg></span></button>
         <figure class="video-card image-card"><img src="assets/catalogo-foto.jpg" alt="Prévia de conteúdo do catálogo"></figure>
       </div>
-      <div class="locked-content attention-card"><b>+ 200 Mídias</b><small>Disponíveis após confirmação</small></div>
+      <div class="locked-content"><svg><use href="#i-lock"/></svg><div><b>+ 200 Mídias</b><small>Disponíveis após confirmação</small></div></div>
     </section>
 
     <section class="trust-section section-pad">
-      <article class="trust-card refund"><span>♨</span><div><b>Garantia de Reembolso</b><p>Acesso 100% garantido. Se você não gostar do conteúdo, devolvemos seu dinheiro via PIX. Sem burocracia.</p></div></article>
-      <article class="trust-card anonymous"><span>♟</span><div><b>Compra 100% Anônima</b><p>Não pedimos seu nome, e-mail ou telefone. Pagou, acessou. Sigilo total garantido na sua compra.</p></div></article>
+      <article class="trust-card refund"><span><svg><use href="#i-refund"/></svg></span><div><b>Garantia de Reembolso</b><p>Acesso 100% garantido. Se você não gostar do conteúdo, devolvemos seu dinheiro via PIX. Sem burocracia.</p></div></article>
+      <article class="trust-card anonymous"><span><svg><use href="#i-user"/></svg></span><div><b>Compra 100% Anônima</b><p>Não pedimos seu nome, e-mail ou telefone. Pagou, acessou. Sigilo total garantido na sua compra.</p></div></article>
 
       <h2 class="access-title">ESCOLHA SEU ACESSO</h2>
       <label class="plan selected">
         <input type="radio" name="plan" value="1699" data-label="PACK VIP" checked>
         <span class="plan-tag">ACESSO ÚNICO</span>
-        <span><b>PACK VIP</b><small>Desbloqueio imediato de todo o conteúdo sem censura.</small></span>
+        <span class="plan-copy"><b>PACK VIP</b><small>Desbloqueio imediato de todo o conteúdo sem censura.</small></span>
         <strong>R$ 16,99</strong><i></i>
       </label>
       <label class="plan">
         <input type="radio" name="plan" value="3000" data-label="VIP + Chamada de vídeo via WhatsApp">
-        <span class="plan-tag hot attention-swing">MAIS VENDIDO</span>
-        <span><b>VIP + Chamada de vídeo via WhatsApp</b></span>
+        <span class="plan-tag hot">MAIS VENDIDO</span>
+        <span class="plan-copy"><b>VIP + Chamada de vídeo via WhatsApp</b><small>Conteúdo completo e chamada reservada.</small></span>
         <strong>R$ 30,00</strong><i></i>
       </label>
-      <div class="security-label">PIX | SEGURO</div>
-      <p class="secure-note">Pagamento processado em ambiente 100% seguro</p>
+      <div class="security-label"><svg><use href="#i-shield"/></svg><span><b>Pagamento via PIX</b><small>Ambiente protegido e confirmação automática</small></span></div>
     </section>
 
     <footer class="payment-footer">
-      <button class="pay-button attention-pay" id="pay-button" type="button">Pagar R$ 16,99 no PIX</button>
+      <button class="pay-button" id="pay-button" type="button">Pagar R$ 16,99 no PIX</button>
     </footer>
   </main>
 
-  <aside class="social-proof" id="social-proof" aria-live="polite"><span>✓</span><p><b id="proof-name">Thiago R.</b><small>acabou de assinar o plano VIP</small></p></aside>
+  <aside class="social-proof" id="social-proof" aria-live="polite"><span><svg><use href="#i-check"/></svg></span><p><b id="proof-name">Thiago R.</b><small>acabou de assinar o plano VIP</small></p></aside>
 
   <div class="modal-backdrop" id="pix-modal" hidden>
     <section class="bottom-sheet" role="dialog" aria-modal="true" aria-labelledby="pix-title">
@@ -78,20 +92,20 @@
       <button class="close-button" type="button" data-close="pix-modal" aria-label="Fechar">×</button>
       <div class="pix-symbol">PIX</div>
       <h2 id="pix-title">Pagamento via PIX</h2>
-      <p>Escaneie o QR Code ou copie o código Pix Copia e Cola.</p>
+      <p>Escaneie o QR Code ou copie o código PIX Copia e Cola.</p>
       <div class="qr-wrapper"><img id="qr-image" alt="QR Code PIX"></div>
-      <label class="pix-copy-label">PIX COPIA E COLA</label>
+      <label class="pix-copy-label" for="pix-code">PIX COPIA E COLA</label>
       <div class="copy-field"><input id="pix-code" readonly value="Gerando cobrança PIX..."><button id="copy-button" type="button">Copiar</button></div>
-      <button class="paid-button" id="paid-button" type="button">✓ Já paguei! Liberar meu acesso</button>
+      <button class="paid-button" id="paid-button" type="button">Já paguei, liberar meu acesso</button>
       <div class="total"><span>Total a pagar:</span><b id="total-price">R$ 16,99</b></div>
-      <p class="release-note">O acesso é liberado automaticamente após o pagamento.</p>
-      <p class="payment-status" id="payment-status"></p>
+      <p class="release-note">O acesso é liberado automaticamente após a confirmação.</p>
+      <p class="payment-status" id="payment-status" role="status" aria-live="polite"></p>
     </section>
   </div>
 
   <div class="modal-backdrop" id="downsell-one" hidden>
-    <section class="offer-modal blue" role="dialog" aria-modal="true">
-      <div class="offer-icon">+</div><h2>ESPERE! NÃO VÁ!</h2>
+    <section class="offer-modal blue" role="dialog" aria-modal="true" aria-labelledby="downsell-one-title">
+      <div class="offer-icon">+</div><h2 id="downsell-one-title">ESPERE, NÃO VÁ</h2>
       <p>Você vai mesmo perder todo o conteúdo restrito? Liberamos um <b>DESCONTO ÚNICO</b> para você entrar agora mesmo.</p>
       <div class="offer-price"><small>ACESSO VIP PROMOCIONAL</small><span><del>R$ 16,99</del><b>R$ 9,99</b></span></div>
       <button class="offer-button" type="button" data-offer="999">QUERO MEU DESCONTO</button>
@@ -100,9 +114,9 @@
   </div>
 
   <div class="modal-backdrop" id="downsell-two" hidden>
-    <section class="offer-modal red" role="dialog" aria-modal="true">
-      <div class="offer-icon">!</div><h2>ÚLTIMA CHANCE!</h2>
-      <p>Ok, eu realmente quero que você veja esse conteúdo. Vou liberar pelo <b>MENOR PREÇO POSSÍVEL.</b> É pegar ou largar!</p>
+    <section class="offer-modal red" role="dialog" aria-modal="true" aria-labelledby="downsell-two-title">
+      <div class="offer-icon">!</div><h2 id="downsell-two-title">ÚLTIMA CHANCE</h2>
+      <p>Quero que você veja esse conteúdo. Vou liberar pelo <b>MENOR PREÇO POSSÍVEL.</b> É pegar ou largar.</p>
       <div class="offer-price"><small>ACESSO VIP EXTREMO</small><span><del>R$ 9,99</del><b>R$ 4,99</b></span></div>
       <button class="offer-button" type="button" data-offer="499">ACEITAR ÚLTIMA OFERTA</button>
       <button class="text-button" type="button" id="final-exit">RECUSAR E SAIR DEFINITIVAMENTE</button>
