@@ -25,6 +25,17 @@
   letter-spacing: 0.2px;
 }
 
+.image-card {
+  margin: 0;
+}
+
+.image-card img {
+  width: 100%;
+  height: 100%;
+  display: block;
+  object-fit: cover;
+}
+
 .attention-pay {
   box-shadow: 0 8px 22px rgba(20, 175, 232, 0.3);
   animation: pay-pulse 2.4s ease-in-out infinite;

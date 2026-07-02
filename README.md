@@ -6,7 +6,12 @@ Frontend mobile-first para Telegram com prévias em vídeo, prova social, oferta
 
 Substitua os arquivos em `assets` mantendo os nomes ou altere os caminhos em `index.html`.
 
-O arquivo `preview.mp4` está sendo reutilizado no banner e nas quatro prévias porque somente um vídeo estava disponível. Para usar vídeos diferentes, crie `preview-1.mp4`, `preview-2.mp4` e assim por diante e ajuste cada elemento `<video>`.
+Os arquivos usados pela página são:
+
+* `banner.mp4` no banner do perfil;
+* `catalogo-1.mp4`, `catalogo-2.mp4` e `catalogo-3.mp4` nas prévias em vídeo;
+* `catalogo-foto.jpg` na prévia estática;
+* `profile.jpeg` exclusivamente na foto de perfil.
 
 ## Teste local
 

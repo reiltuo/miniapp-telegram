@@ -6,10 +6,10 @@ const byId = id => document.getElementById(id);
 telegram?.ready();
 telegram?.expand();
 
-document.querySelectorAll(".video-card").forEach(card => {
+document.querySelectorAll(".video-card[data-video]").forEach(card => {
   const video = card.querySelector("video");
   card.addEventListener("click", () => {
-    document.querySelectorAll(".video-card video").forEach(other => { if (other !== video) { other.pause(); other.closest(".video-card").classList.remove("playing"); } });
+    document.querySelectorAll(".video-card[data-video] video").forEach(other => { if (other !== video) { other.pause(); other.closest(".video-card").classList.remove("playing"); } });
     if (video.paused) { video.play(); card.classList.add("playing"); } else { video.pause(); card.classList.remove("playing"); }
   });
   video.addEventListener("ended", () => card.classList.remove("playing"));
