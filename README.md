@@ -18,12 +18,13 @@ python -m http.server 8080
 
 Abra `http://localhost:8080`. O Telegram exige HTTPS para o uso real como Mini App.
 
-## Integração PIX
+## Integração PIX com NexusPag
 
-O frontend espera dois endpoints próprios:
+O projeto inclui três Vercel Functions:
 
 * `POST /api/pix/create`
 * `GET /api/pix/status?id=ID_DA_COBRANCA`
+* `POST /api/webhooks/nexuspag`
 
 O primeiro recebe:
 
@@ -49,16 +50,27 @@ ou:
 {"status":"paid"}
 ```
 
-### Fluxo recomendado com gateway
+### Variáveis de ambiente na Vercel
 
-1. Crie uma conta empresarial em um gateway que ofereça PIX, como Mercado Pago, Asaas, Pagar.me ou Efí.
-2. Obtenha as credenciais de produção e mantenha-as somente no backend.
-3. No endpoint `/api/pix/create`, valide no servidor qual produto e preço podem ser cobrados. Nunca confie no valor enviado pelo navegador.
-4. Chame a API do gateway para criar uma cobrança PIX.
-5. Converta a resposta do gateway para o formato esperado pelo frontend.
-6. Configure um webhook HTTPS no gateway para receber a confirmação do pagamento.
-7. Valide a assinatura do webhook, atualize a cobrança no banco e libere o acesso de forma idempotente.
-8. O endpoint `/api/pix/status` consulta o banco, não apenas o navegador ou a informação enviada pelo cliente.
-9. Relacione a cobrança ao usuário do Telegram após validar `Telegram.WebApp.initData` no backend.
+Cadastre somente no ambiente `Production`:
+
+```text
+NEXUSPAG_API_KEY
+NEXUSPAG_WEBHOOK_SECRET
+```
+
+A chave da API é enviada à NexusPag no header `x-api-key`. O segredo do webhook valida a assinatura HMAC antes de aceitar uma confirmação.
+
+### Fluxo da integração
+
+1. O frontend envia o identificador do plano em centavos.
+2. O backend aceita somente os quatro preços cadastrados no código.
+3. O backend converte centavos para reais e cria a cobrança na NexusPag.
+4. A NexusPag retorna o código PIX, QR Code e identificador da transação.
+5. O frontend consulta o status a cada cinco segundos.
+6. A NexusPag também chama o webhook quando confirma o pagamento.
+7. O webhook valida a assinatura HMAC antes de aceitar o evento.
+
+O webhook atual valida e registra a confirmação nos logs da Vercel. Para controlar conteúdo realmente protegido, adicione um banco de dados e associe `external_id`, usuário do Telegram e permissão de acesso. O conteúdo protegido nunca deve depender apenas de JavaScript no navegador.
 
 Não exponha token do gateway, token do bot ou segredo de webhook no HTML ou JavaScript público. O botão `Já paguei` apenas consulta o status. A liberação real deve depender do webhook confirmado pelo servidor.
