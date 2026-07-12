@@ -3,6 +3,7 @@ const state = { amount: 1699, label: "PACK VIP", chargeId: null, pollTimer: null
 const money = amount => (amount / 100).toLocaleString("pt-BR", { style: "currency", currency: "BRL" });
 const byId = id => document.getElementById(id);
 const CATALOG_PREVIEW_SECONDS = 3;
+const VIP_CHANNEL_URL = "https://t.me/+Web0AlQBgcYwM2Zh";
 
 telegram?.ready();
 telegram?.expand();
@@ -66,6 +67,26 @@ function showModal(id) {
 }
 function hideModal(id) { byId(id).hidden = true; document.body.style.overflow = ""; }
 
+function resetAccessPanel() {
+  byId("access-panel").hidden = true;
+  byId("pix-modal").classList.remove("is-paid");
+}
+
+function showAccessPanel() {
+  byId("access-panel").hidden = false;
+  byId("pix-modal").classList.add("is-paid");
+  byId("paid-button").disabled = true;
+  byId("paid-button").textContent = "Pagamento confirmado";
+}
+
+function openVipChannel() {
+  if (telegram?.openTelegramLink) {
+    telegram.openTelegramLink(VIP_CHANNEL_URL);
+    return;
+  }
+  window.open(VIP_CHANNEL_URL, "_blank", "noopener,noreferrer");
+}
+
 document.querySelectorAll("[data-close]").forEach(button => button.addEventListener("click", () => {
   hideModal(button.dataset.close);
   if (!state.paid) showModal("downsell-one");
@@ -76,9 +97,11 @@ async function createPixCharge() {
   state.creatingCharge = true;
   byId("pay-button").disabled = true;
   byId("paid-button").disabled = true;
+  byId("paid-button").textContent = "Já paguei, liberar meu acesso";
   byId("pix-code").value = "Gerando cobrança PIX...";
   byId("qr-image").removeAttribute("src");
   byId("payment-status").textContent = "Gerando uma cobrança segura...";
+  resetAccessPanel();
   showModal("pix-modal");
   try {
     const response = await fetch("/api/pix/create", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ amount: state.amount, description: state.label }) });
@@ -109,6 +132,7 @@ async function checkPayment() {
       state.paid = true;
       clearInterval(state.pollTimer);
       byId("payment-status").textContent = "Pagamento confirmado. Acesso liberado.";
+      showAccessPanel();
       telegram?.HapticFeedback?.notificationOccurred("success");
       telegram?.sendData(JSON.stringify({ action: "pix_paid", chargeId: state.chargeId }));
     } else {
@@ -122,6 +146,7 @@ function startPaymentPolling() { clearInterval(state.pollTimer); state.pollTimer
 
 byId("pay-button").addEventListener("click", createPixCharge);
 byId("paid-button").addEventListener("click", checkPayment);
+byId("vip-button").addEventListener("click", openVipChannel);
 byId("copy-button").addEventListener("click", async () => {
   const pixInput = byId("pix-code");
   try {

@@ -173,6 +173,18 @@ svg .fill { fill: currentColor; stroke: none; }
 .total b { color: #17212b; font-size: 23px; letter-spacing: -0.5px; }
 .release-note { margin: 7px 0 0 !important; font-size: 10px !important; }
 .payment-status { min-height: 17px; margin: 9px 0 0; color: #536471; font-size: 11px; font-weight: 700; line-height: 1.4; }
+.access-panel { margin-top: 15px; padding: 16px 14px 14px; border: 1px solid rgba(25, 189, 112, 0.24); border-radius: 16px; background: linear-gradient(180deg, #f0fff8, #ffffff); box-shadow: 0 8px 22px rgba(20, 184, 110, 0.1); animation: modal-in 0.24s ease-out both; }
+.access-panel[hidden] { display: none; }
+.access-check { width: 42px; height: 42px; margin: 0 auto 9px; display: grid; place-items: center; border-radius: 50%; color: white; background: linear-gradient(135deg, #19bd70, #13a85f); box-shadow: 0 8px 18px rgba(20, 184, 110, 0.2); }
+.access-check svg { width: 21px; height: 21px; fill: none; stroke: currentColor; stroke-width: 3; stroke-linecap: round; stroke-linejoin: round; }
+.access-panel b { display: block; color: #17212b; font-size: 18px; letter-spacing: -0.35px; }
+.access-panel p { margin: 6px 0 12px; color: #697789; font-size: 12px; line-height: 1.45; }
+.vip-button { width: 100%; min-height: 46px; border: 0; border-radius: 12px; color: white; background: linear-gradient(135deg, #18b8f0, #009fe3); box-shadow: 0 9px 20px rgba(0, 159, 227, 0.22); font-size: 14px; font-weight: 900; }
+.vip-button:active { transform: scale(0.985); }
+.is-paid .qr-wrapper,
+.is-paid .pix-copy-label,
+.is-paid .copy-field,
+.is-paid .release-note { display: none; }
 
 .offer-modal { width: min(calc(100% - 30px), 390px); align-self: center; padding: 27px 23px 24px; border-radius: 27px; background: white; box-shadow: 0 18px 55px rgba(12, 19, 22, 0.25); text-align: center; animation: modal-in 0.24s ease-out both; }
 .offer-modal h2 { margin: 17px 0 8px; color: #1c252e; font-size: 22px; letter-spacing: -0.7px; }
