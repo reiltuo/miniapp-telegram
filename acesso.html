@@ -1,0 +1,313 @@
+﻿<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#ffffff">
+  <title>Central de Acessos Liberados</title>
+  <link rel="stylesheet" href="styles.css">
+  <script src="https://telegram.org/js/telegram-web-app.js"></script>
+  <style>
+    .access-page {
+      padding: 20px 16px 40px;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+    .access-header {
+      text-align: center;
+      padding: 10px 0 6px;
+    }
+    .access-header h1 {
+      margin: 0 0 6px;
+      font-size: 22px;
+      color: #111820;
+      letter-spacing: -0.4px;
+    }
+    .access-header p {
+      margin: 0;
+      color: #64748b;
+      font-size: 13px;
+      line-height: 1.45;
+    }
+    .access-card {
+      background: #ffffff;
+      border: 1.5px solid #e2e8f0;
+      border-radius: 18px;
+      padding: 18px 16px;
+      box-shadow: 0 4px 16px rgba(15, 23, 42, 0.05);
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      position: relative;
+      overflow: hidden;
+      transition: transform 0.18s ease, box-shadow 0.18s ease;
+    }
+    .access-card::before {
+      content: "";
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 4px;
+    }
+    .card-conteudos::before {
+      background: linear-gradient(90deg, #0aa9e8, #0088cc);
+    }
+    .card-chamada::before {
+      background: linear-gradient(90deg, #10b981, #059669);
+    }
+    .card-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      width: max-content;
+      padding: 4px 9px;
+      border-radius: 20px;
+      font-size: 10px;
+      font-weight: 850;
+      letter-spacing: 0.3px;
+      text-transform: uppercase;
+    }
+    .badge-blue {
+      background: #e0f2fe;
+      color: #0284c7;
+    }
+    .badge-green {
+      background: #dcfce7;
+      color: #15803d;
+    }
+    .card-info h2 {
+      margin: 0 0 4px;
+      font-size: 17px;
+      color: #0f172a;
+    }
+    .card-info p {
+      margin: 0;
+      font-size: 12px;
+      color: #64748b;
+      line-height: 1.45;
+    }
+    .claim-button {
+      width: 100%;
+      min-height: 48px;
+      border: 0;
+      border-radius: 12px;
+      padding: 12px 16px;
+      color: #ffffff;
+      font-size: 15px;
+      font-weight: 800;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      cursor: pointer;
+      transition: transform 0.14s ease, opacity 0.14s ease, filter 0.14s ease;
+    }
+    .claim-button:active:not(:disabled) {
+      transform: scale(0.98);
+    }
+    .btn-blue {
+      background: linear-gradient(135deg, #0aa9e8, #078ec4);
+      box-shadow: 0 6px 18px rgba(10, 169, 232, 0.28);
+    }
+    .btn-green {
+      background: linear-gradient(135deg, #10b981, #059669);
+      box-shadow: 0 6px 18px rgba(16, 185, 129, 0.28);
+    }
+    .claim-button:disabled {
+      background: #e2e8f0 !important;
+      color: #94a3b8 !important;
+      box-shadow: none !important;
+      cursor: not-allowed;
+      opacity: 0.9;
+    }
+    .card-status {
+      font-size: 11px;
+      font-weight: 700;
+      min-height: 16px;
+      margin: 0;
+      text-align: center;
+    }
+    .status-warning {
+      color: #e11d48;
+    }
+    .status-success {
+      color: #16a34a;
+    }
+    .security-notice {
+      margin-top: 8px;
+      padding: 14px;
+      border-radius: 14px;
+      background: #f8fafc;
+      border: 1px dashed #cbd5e1;
+      display: flex;
+      gap: 10px;
+      align-items: flex-start;
+    }
+    .security-notice svg {
+      width: 20px;
+      height: 20px;
+      flex: 0 0 auto;
+      color: #64748b;
+      margin-top: 1px;
+    }
+    .security-notice div b {
+      display: block;
+      font-size: 12px;
+      color: #334155;
+      margin-bottom: 2px;
+    }
+    .security-notice div p {
+      margin: 0;
+      font-size: 11px;
+      color: #64748b;
+      line-height: 1.45;
+    }
+  </style>
+</head>
+<body>
+  <svg class="svg-sprite" aria-hidden="true">
+    <symbol id="i-check" viewBox="0 0 24 24"><path d="M5 12.5l4.5 4.5L19 7.5"/></symbol>
+    <symbol id="i-shield" viewBox="0 0 24 24"><path d="M12 3l8 3v5c0 5.3-3.4 8.4-8 10-4.6-1.6-8-4.7-8-10V6z"/><path d="M8.5 12l2.3 2.3 4.7-5"/></symbol>
+    <symbol id="i-lock" viewBox="0 0 24 24"><rect x="5" y="10" width="14" height="11" rx="2"/><path d="M8 10V7a4 4 0 018 0v3"/></symbol>
+    <symbol id="i-video" viewBox="0 0 24 24"><rect x="3" y="5" width="14" height="14" rx="2"/><path d="M17 10l4-3v10l-4-3z"/></symbol>
+    <symbol id="i-image" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="16" rx="2"/><circle cx="8.5" cy="9" r="1.5"/><path d="M4 17l5-5 4 4 2-2 5 5"/></symbol>
+  </svg>
+
+  <main class="app-shell">
+    <header class="topbar">
+      <strong>CENTRAL DE LIBERAÇÃO</strong>
+    </header>
+
+    <div class="access-page">
+      <div class="access-header">
+        <h1>Seus Acessos Liberados</h1>
+        <p>Clique no botão abaixo para desbloquear seu link. Cada botão só pode ser resgatado uma única vez.</p>
+      </div>
+
+      <!-- CARD 1: CONTEUDOS -->
+      <section class="access-card card-conteudos">
+        <span class="card-badge badge-blue">
+          <svg style="width: 12px; height: 12px;"><use href="#i-image"/></svg>
+          Canal VIP Telegram
+        </span>
+        <div class="card-info">
+          <h2>Conteúdos Exclusivos</h2>
+          <p>Acesso ilimitado a todas as fotos, vídeos privativos e atualizações diárias sem censura.</p>
+        </div>
+        <button type="button" class="claim-button btn-blue" id="btn-conteudos" data-type="conteudos">
+          Acessar Conteúdos
+        </button>
+        <p class="card-status" id="status-conteudos"></p>
+      </section>
+
+      <!-- CARD 2: CHAMADA -->
+      <section class="access-card card-chamada">
+        <span class="card-badge badge-green">
+          <svg style="width: 12px; height: 12px;"><use href="#i-video"/></svg>
+          Bot de Atendimento
+        </span>
+        <div class="card-info">
+          <h2>Chamada de Vídeo</h2>
+          <p>Acesse o bot exclusivo para agendar e realizar a sua chamada de vídeo privativa.</p>
+        </div>
+        <button type="button" class="claim-button btn-green" id="btn-chamada" data-type="chamada">
+          Acessar Chamada
+        </button>
+        <p class="card-status" id="status-chamada"></p>
+      </section>
+
+      <!-- AVISO DE SEGURANÇA -->
+      <div class="security-notice">
+        <svg><use href="#i-shield"/></svg>
+        <div>
+          <b>Acesso de uso único (1 clique por dispositivo/IP)</b>
+          <p>Por segurança e combate à pirataria, este link expira imediatamente após ser aberto pela primeira vez. Não feche nem compartilhe.</p>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <script>
+    const tg = window.Telegram?.WebApp;
+    tg?.ready();
+    tg?.expand();
+
+    function updateButtonState(type, isClaimed, message = "") {
+      const btn = document.getElementById("btn-" + type);
+      const status = document.getElementById("status-" + type);
+
+      if (isClaimed) {
+        btn.disabled = true;
+        btn.innerHTML = "🔒 Acesso já resgatado";
+        if (message) {
+          status.textContent = message;
+          status.className = "card-status status-warning";
+        }
+      }
+    }
+
+    // Verificar se já foi resgatado neste dispositivo (localStorage e Cookies)
+    ["conteudos", "chamada"].forEach(type => {
+      const localClaim = localStorage.getItem("claimed_" + type);
+      const hasCookie = document.cookie.includes("claimed_" + type + "=true");
+      if (localClaim === "true" || hasCookie) {
+        updateButtonState(type, true);
+      }
+    });
+
+    async function handleClaim(type) {
+      const btn = document.getElementById("btn-" + type);
+      const status = document.getElementById("status-" + type);
+
+      btn.disabled = true;
+      const originalText = btn.textContent;
+      btn.textContent = "Liberando acesso...";
+      status.textContent = "";
+
+      try {
+        const response = await fetch("/api/access/claim", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ type: type }),
+        });
+
+        const data = await response.json().catch(() => ({}));
+
+        if (!response.ok) {
+          localStorage.setItem("claimed_" + type, "true");
+          updateButtonState(type, true, data.error || "Acesso já utilizado para este dispositivo/IP.");
+          return;
+        }
+
+        // Sucesso: marcar como resgatado no dispositivo
+        localStorage.setItem("claimed_" + type, "true");
+        updateButtonState(type, true);
+        status.textContent = "Redirecionando para o Telegram...";
+        status.className = "card-status status-success";
+
+        tg?.HapticFeedback?.notificationOccurred("success");
+
+        // Abrir link do Telegram
+        setTimeout(() => {
+          if (tg?.openTelegramLink) {
+            tg.openTelegramLink(data.url);
+          } else {
+            window.location.href = data.url;
+          }
+        }, 300);
+
+      } catch (err) {
+        btn.disabled = false;
+        btn.textContent = originalText;
+        status.textContent = "Erro de conexão ao liberar link. Tente novamente.";
+        status.className = "card-status status-warning";
+      }
+    }
+
+    document.getElementById("btn-conteudos").addEventListener("click", () => handleClaim("conteudos"));
+    document.getElementById("btn-chamada").addEventListener("click", () => handleClaim("chamada"));
+  </script>
+</body>
+</html>
