@@ -1,0 +1,8 @@
+{
+  "name": "miniapp-telegram-vivisnoronha",
+  "private": true,
+  "type": "module",
+  "engines": {
+    "node": ">=20"
+  }
+}
