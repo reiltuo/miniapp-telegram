@@ -1,0 +1,6 @@
+﻿[build]
+  publish = "."
+
+[functions]
+  directory = "api"
+  node_bundler = "esbuild"
