@@ -64,18 +64,18 @@ O endpoint de Instagram recebe:
 
 E envia mensagem formatada instantânea para o seu bot do Telegram.
 
-### Variáveis de ambiente na Vercel
+### Variáveis de ambiente (Vercel / Netlify)
 
 Cadastre no ambiente `Production`:
 
 ```text
-NEXUSPAG_API_KEY
-NEXUSPAG_WEBHOOK_SECRET
+OMEGA_PUBLIC_KEY
+OMEGA_SECRET_KEY
 TELEGRAM_BOT_TOKEN
 TELEGRAM_ADMIN_CHAT_ID
 ```
 
-A chave da API é enviada à NexusPag no header `x-api-key`. O segredo do webhook valida a assinatura HMAC antes de aceitar uma confirmação.
+As chaves `OMEGA_PUBLIC_KEY` e `OMEGA_SECRET_KEY` são obtidas no painel da Omega Payments e enviadas nos headers `x-public-key` e `x-secret-key`.
 O `TELEGRAM_BOT_TOKEN` é obtido no @BotFather e o `TELEGRAM_ADMIN_CHAT_ID` é o seu ID de chat no Telegram para receber os @s dos compradores do Close Friends.
 
 ### Fluxo da integração

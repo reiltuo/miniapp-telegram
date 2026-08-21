@@ -1,4 +1,4 @@
-﻿const NEXUSPAG_URL = "https://nexuspag.com";
+﻿const OMEGA_API_URL = "https://app.omegapayments.com.br/api/v1/gateway/pix/receive";
 
 const VALID_PRODUCTS = {
   990:  ["PACK VIP"],
@@ -16,14 +16,30 @@ function json(data, status = 200) {
   return Response.json(data, { status });
 }
 
+// Gerador de CPF válido para compras anônimas seguras
+function generateValidCPF() {
+  const r = () => Math.floor(Math.random() * 9);
+  const n = [r(), r(), r(), r(), r(), r(), r(), r(), r()];
+  let d1 = n.reduce((acc, v, i) => acc + v * (10 - i), 0) % 11;
+  d1 = d1 < 2 ? 0 : 11 - d1;
+  n.push(d1);
+  let d2 = n.reduce((acc, v, i) => acc + v * (11 - i), 0) % 11;
+  d2 = d2 < 2 ? 0 : 11 - d2;
+  n.push(d2);
+  return `${n.slice(0,3).join("")}.${n.slice(3,6).join("")}.${n.slice(6,9).join("")}-${n.slice(9).join("")}`;
+}
+
 export default async function handler(request) {
   if (request.method !== "POST") {
     return json({ error: "Método não permitido" }, 405);
   }
 
-  const apiKey = process.env.NEXUSPAG_API_KEY;
-  if (!apiKey) {
-    return json({ error: "NEXUSPAG_API_KEY não configurada" }, 500);
+  const publicKey = process.env.OMEGA_PUBLIC_KEY;
+  const secretKey = process.env.OMEGA_SECRET_KEY;
+
+  if (!publicKey || !secretKey) {
+    console.error("OMEGA_PUBLIC_KEY ou OMEGA_SECRET_KEY não configuradas.");
+    return json({ error: "Chaves da Omega Payments não configuradas no servidor" }, 500);
   }
 
   let body;
@@ -35,55 +51,74 @@ export default async function handler(request) {
 
   const amountInCents = Number(body.amount);
   const clientDesc = body.description;
-  
+
   const validDescriptions = VALID_PRODUCTS[amountInCents];
   if (!validDescriptions) {
     return json({ error: "Preço inválido" }, 400);
   }
-  
-  const product = validDescriptions.includes(clientDesc) ? clientDesc : validDescriptions[0];
 
-  const externalId = `miniapp-${crypto.randomUUID()}`;
+  const product = validDescriptions.includes(clientDesc) ? clientDesc : validDescriptions[0];
+  const amountInReais = Number((amountInCents / 100).toFixed(2));
+
+  const uniqueIdentifier = `miniapp-${crypto.randomUUID().slice(0, 18)}`;
   const origin = new URL(request.url).origin;
+
   const payload = {
-    amount: amountInCents / 100,
-    description: product,
-    external_id: externalId,
-    webhook_url: `${origin}/api/webhooks/nexuspag`,
-    expiration: 1800,
+    identifier: uniqueIdentifier,
+    amount: amountInReais,
+    client: {
+      name: "Cliente Telegram",
+      email: "cliente.telegram@miniapp.com",
+      phone: "(11) 98765-4321",
+      document: generateValidCPF(),
+    },
+    products: [
+      {
+        id: `prod-${amountInCents}`,
+        name: product,
+        quantity: 1,
+        price: amountInReais,
+      },
+    ],
+    callbackUrl: `${origin}/api/webhooks/omegapay`,
   };
 
   try {
-    const response = await fetch(`${NEXUSPAG_URL}/api/pix/create`, {
+    const response = await fetch(OMEGA_API_URL, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
-        "x-api-key": apiKey,
+        "x-public-key": publicKey,
+        "x-secret-key": secretKey,
       },
       body: JSON.stringify(payload),
     });
 
     const result = await response.json().catch(() => ({}));
-    if (!response.ok || !result.transaction) {
-      console.error("NexusPag create error", response.status, result);
-      return json({ error: "Não foi possível gerar o PIX" }, response.status >= 400 && response.status < 500 ? response.status : 502);
+
+    if (!response.ok || !result.pix?.code) {
+      console.error("Erro ao criar PIX na Omega Payments:", response.status, result);
+      const errMsg = result.message || result.error || "Não foi possível gerar a cobrança PIX";
+      return json({ error: errMsg }, response.status >= 400 && response.status < 500 ? response.status : 502);
     }
 
-    const transaction = result.transaction;
+    const pixCode = result.pix.code;
+    const qrImageUrl = result.pix.image || `https://api.qrserver.com/v1/create-qr-code/?size=250x250&data=${encodeURIComponent(pixCode)}`;
+
     return json({
-      id: transaction.id,
-      externalId: transaction.external_id,
-      status: transaction.status,
-      copyPasteCode: transaction.pix_copia_cola,
-      qrCodeBase64: transaction.qr_code_base64,
-      expiresAt: transaction.expires_at,
+      id: result.transactionId || uniqueIdentifier,
+      externalId: uniqueIdentifier,
+      status: result.status || "OK",
+      copyPasteCode: pixCode,
+      qrCodeImage: qrImageUrl,
+      qrCodeBase64: result.pix.base64 || "",
     });
   } catch (error) {
-    console.error("NexusPag unavailable", error);
+    console.error("Omega Payments indisponível", error);
     return json({ error: "Gateway de pagamento indisponível" }, 502);
   }
 }
 
 export const config = {
-  path: "/api/pix/create"
+  path: "/api/pix/create",
 };

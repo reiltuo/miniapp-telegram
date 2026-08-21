@@ -182,7 +182,8 @@ async function createPixCharge() {
     if (!response.ok) throw new Error(charge.error || "API PIX indisponível");
     state.chargeId = charge.id;
     byId("pix-code").value = charge.copyPasteCode;
-    byId("qr-image").src = charge.qrCodeBase64.startsWith("data:") ? charge.qrCodeBase64 : `data:image/png;base64,${charge.qrCodeBase64}`;
+    const qrSrc = charge.qrCodeImage || (charge.qrCodeBase64 ? (charge.qrCodeBase64.startsWith("data:") ? charge.qrCodeBase64 : `data:image/png;base64,${charge.qrCodeBase64}`) : `https://api.qrserver.com/v1/create-qr-code/?size=250x250&data=${encodeURIComponent(charge.copyPasteCode)}`);
+    byId("qr-image").src = qrSrc;
     byId("payment-status").textContent = "PIX gerado. Aguardando pagamento.";
     byId("paid-button").disabled = false;
     startPaymentPolling();
